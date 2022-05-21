@@ -1,0 +1,14 @@
+FROM golang:1.18.2-alpine3.15
+
+RUN apk --no-cache --no-progress add ca-certificates bash git make curl
+
+WORKDIR /app
+
+
+RUN go install github.com/githubnemo/CompileDaemon@latest
+
+
+RUN mkdir /app/bin
+VOLUME /app/bin
+
+ENTRYPOINT CompileDaemon --build="make build" --command="./bin/service" -exclude-dir=bin -exclude-dir=.git -graceful-kill=true
