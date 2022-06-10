@@ -1,17 +1,34 @@
 package server
 
 import (
+	"expense-bucket-api/model"
 	"expense-bucket-api/routes"
+	"os"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func Start() error {
-	app := fiber.New()
-	app.Use(logger.New())
-	routes.Setup(app)
-	err := app.Listen(":3000")
+	e := echo.New()
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "from=${remote_ip} method=${method}, uri=${uri}, status=${status}\n",
+	}))
 
-	return err
+	dsn := os.Getenv("CONNECTION")
+	db, err := model.SetupDatabase(dsn)
+
+	if err != nil {
+		return err
+	}
+
+	config := routes.RoutesConfig{
+		Echo: e,
+		DB:   db,
+	}
+	err = routes.Setup(config)
+	if err != nil {
+		return err
+	}
+	return e.Start(":3000")
 }
