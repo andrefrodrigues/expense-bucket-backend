@@ -10,9 +10,14 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+type TokenData struct {
+	Email string
+	Name  string
+}
+
 var NoPrivateKeyErr = errors.New("Private key missing")
 
-func CreateToken(dto SignupDto) (string, error) {
+func CreateToken(dto TokenData) (string, error) {
 
 	claims := jwt.MapClaims{
 		"email": dto.Email,

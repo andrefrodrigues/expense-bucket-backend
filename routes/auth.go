@@ -1,16 +1,17 @@
-package auth
+package routes
 
 import (
+	"expense-bucket-api/service"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetupRoutes(api fiber.Router) error {
-	authService := NewAuthService()
+func SetupAuthRoutes(api fiber.Router) error {
+	authService := service.NewAuthService()
 
 	api.Post("signup", func(c *fiber.Ctx) error {
-		payload := SignupDto{}
+		payload := service.SignupDto{}
 		if err := c.BodyParser(&payload); err != nil {
 			return c.SendStatus(http.StatusBadRequest)
 		}

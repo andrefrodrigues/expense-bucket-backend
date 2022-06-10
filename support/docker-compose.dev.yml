@@ -11,3 +11,14 @@ services:
       - ../:/app
     env_file:
       - ../.env.local
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:14.3-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=expenseBucket
+      - POSTGRES_PASSWORD=admin
